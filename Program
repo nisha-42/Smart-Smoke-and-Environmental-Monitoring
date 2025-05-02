@@ -1,0 +1,54 @@
+#include <WiFi.h>
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <Wire.h>
+#include <Adafruit_BMP280.h>
+#include <HTTPClient.h>
+
+#define DHTPIN 4
+#define DHTTYPE DHT22
+#define MQ2PIN 34
+
+DHT dht(DHTPIN, DHTTYPE);
+Adafruit_BMP280 bmp;
+
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+  bmp.begin();
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWiFi connected");
+}
+
+void loop() {
+  float temp = dht.readTemperature();
+  float hum = dht.readHumidity();
+  float pressure = bmp.readPressure() / 100.0F;
+  int smoke = analogRead(MQ2PIN);
+
+  Serial.printf("Temp: %.2f C, Hum: %.2f %%, Pressure: %.2f hPa, Smoke: %d\n", temp, hum, pressure, smoke);
+
+  // Example alert
+  if (smoke > 500) {
+    Serial.println("Warning: High smoke level detected!");
+    // Optional: activate buzzer, send notification
+  }
+
+  // Optional: send data to cloud
+  /*
+  HTTPClient http;
+  http.begin("http://api.yourserver.com/update?temp=" + String(temp));
+  int httpCode = http.GET();
+  http.end();
+  */
+
+  delay(5000);
+}
