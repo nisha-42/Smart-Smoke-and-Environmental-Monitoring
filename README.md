@@ -32,6 +32,5 @@ See `/hardware`, `/code`, `/mobile_app`, `/cloud`.
 3. Set up Firebase and mobile app
 4. Power the circuit and monitor data
 
-## 📝 License
-MIT License
+
 
